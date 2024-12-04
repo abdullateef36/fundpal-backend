@@ -10,6 +10,8 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const baseUrl = process.env.BASE_URL || `http://192.168.15.14:${PORT}`;
+
 
 // Middleware
 app.use(cors());
@@ -91,7 +93,7 @@ app.post('/signup', upload.single('profileImage'), async (req, res) => {
       country: JSON.parse(country), // Parse JSON string if sent as text
       isAbove18,
       isAgreedToTerms,
-      profileImage: req.file ? `/uploads/${req.file.filename}` : null, // Save file path to database
+      profileImage: req.file ? `${baseUrl}/uploads/${req.file.filename}` : null, // Save file path to database
     });
 
     await newUser.save();
@@ -123,6 +125,10 @@ app.post('/signin', async (req, res) => {
       { expiresIn: '1h' }
     );
 
+    const profileImage = user.profileImage
+  ? `${baseUrl}${user.profileImage}` // Ensure full URL
+  : null;
+
     // Send user info along with the token
     res.status(200).json({
       message: 'Sign-in successful',
@@ -132,7 +138,8 @@ app.post('/signin', async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         phoneNumber: user.phoneNumber,
-        profileImage: user.profileImage,
+        ...user._doc,
+        profileImage,
       },
     });
   } catch (error) {
