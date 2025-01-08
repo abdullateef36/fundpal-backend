@@ -8,10 +8,11 @@ const multer = require('multer');
 const path = require('path');
 require('dotenv').config();
 
+const fundsRouter = require('./Funds.js'); // Replace with the actual path to funds.js
+
 const app = express();
 const PORT = process.env.PORT || 3000;
-const baseUrl = process.env.BASE_URL || `http://192.168.15.14:${PORT}`;
-
+const baseUrl = process.env.BASE_URL || `http://192.168.183.14:${PORT}`;
 
 // Middleware
 app.use(cors());
@@ -19,7 +20,8 @@ app.use(bodyParser.json());
 app.use('/uploads', express.static('uploads')); // Serve static files from the "uploads" folder
 
 // MongoDB Connection
-mongoose.connect("mongodb+srv://akinolaabdulateef36:BsoJVJv7qCQMLSF4@cluster0.4i1we.mongodb.net/fundpal")
+mongoose
+  .connect("mongodb+srv://akinolaabdulateef36:BsoJVJv7qCQMLSF4@cluster0.4i1we.mongodb.net/fundpal")
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB connection error:', err));
 
@@ -121,13 +123,13 @@ app.post('/signin', async (req, res) => {
 
     const token = jwt.sign(
       { id: user._id, email: user.email },
-      process.env.JWT_SECRET='5adf1a60a67439eb950d8c351c10c585df3695ff95e364ca6b8a16a0d488d85b' || 'defaultsecret',
+      process.env.JWT_SECRET || 'defaultsecret',
       { expiresIn: '1h' }
     );
 
     const profileImage = user.profileImage
-  ? `${baseUrl}${user.profileImage}` // Ensure full URL
-  : null;
+      ? `${baseUrl}${user.profileImage}` // Ensure full URL
+      : null;
 
     // Send user info along with the token
     res.status(200).json({
@@ -148,5 +150,8 @@ app.post('/signin', async (req, res) => {
   }
 });
 
-// Start Server
+// Use fundsRouter for fund-related routes
+app.use('/', fundsRouter);
+
+// Start the server
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
