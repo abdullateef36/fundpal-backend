@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
 const path = require('path');
-const { authenticateToken } = require('./authMiddleware'); // Import from authMiddleware.js
 
 const router = express.Router(); // Use Router instead of app
 

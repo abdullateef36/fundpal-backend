@@ -12,7 +12,7 @@ const fundsRouter = require('./Funds.js'); // Replace with the actual path to fu
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const baseUrl = process.env.BASE_URL || `http://192.168.183.14:${PORT}`;
+const baseUrl = process.env.BASE_URL || `http://192.168.131.14:${PORT}`;
 
 // Middleware
 app.use(cors());
